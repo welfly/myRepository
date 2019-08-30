@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../js/underscore.js"></script>
+    <style>
+        #canvas{
+            box-shadow: 0 0 20px gray;
+            margin: 20px 100px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 600;
+        canvas.height = 400;
+        canvas.style.backgroundColor = "white";
+
+        // 小球类
+        class Boll {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.r = 35;
+            }
+
+        // 绘制
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2)
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // 绘制移动的小球类
+        class moveBoll extends Boll{
+            constructor(x, y, color){
+                super(x, y, color);
+                // 数量的变化
+                this.dx = _.random(-5, 5);
+                this.dy = _.random(-8, 5);
+                this.dr = _.random(1, 3)
+            }
+
+            addData() {
+                this.x += this.dx;
+                this.y += this.dy;
+                this.r -= this.dr;
+                if (this.r <0){
+                    this.r = 0;
+                }
+            }
+        }
+
+        // 实例小球
+        let ballArr = [];
+        let colorArr = ["red","yellow","blue","white","green","pink","purple","orange"]
+        
+        // 鼠标移动
+        canvas.addEventListener("mousemove", function(el){
+            ballArr.push(new moveBoll(el.offsetX, el.offsetY, colorArr[ _.random(0, colorArr.length - 1)]))
+            console.log(ballArr)
+        })
+
+        // 开启定时器
+        setInterval(function(){
+            // 绘制之前先清除
+            // ctx.clearRect(0, 0, canvas.width, canvas.height)
+            
+            // 绘制
+            for(let i =0; i < ballArr.length; i++){
+                ballArr[i].draw();
+                ballArr[i].addData()
+            }
+        }, 40)
+    </script>
+</body>
+</html>
